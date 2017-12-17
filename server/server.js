@@ -24,13 +24,13 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('newMessage',
         generateMessage('Admin', `User joined the chat...`)); // emituje zdarzenia do WSZYSTKICH podłączonych POZA wywołującym
 
-    socket.on('createMessage', (message) => {
+    socket.on('createMessage', (message, callback) => {
         console.log('createMessage', message);
 
 
         // Poniszy kod emituje zdarzenie do wszystkich podłączonych
-        io.emit('newMessage', generateMessage( message.from, message.text));
-
+        io.emit('newMessage', generateMessage(message.from, message.text));
+        callback('lolek!');   // to jest funkcja callback podana w socket.emit(<event>, <dane>, <callback>)
         // Poniszy kod emituje zdarzebie do wszystkich POZA tym który jest w "socket" (czyli tym który dołączył do chatu)
         // socket.broadcast.emit('newMessage', {    // emituje zdarzenia do WSZYSTKICH podłączonych
         //         from: message.from,
