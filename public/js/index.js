@@ -24,6 +24,14 @@ socket.on('newMessage', (message) => {
 // }, function (info) {
 //     console.log(`Serwer odpowiedział:::: Przyjąłem z komentarzem:`, info);
 // });
+socket.on('newLocationMessage', function (message) {
+    var li = jQuery('<li></li>');
+    var a = jQuery('<a target="_blank">My current location</a>');
+    li.text(`${message.from}: `);
+    a.attr('href', message.url);
+    li.append(a);
+    jQuery('#messages').append(li);
+});
 
 jQuery('#message-form').on('submit', function (e) {
     e.preventDefault();
@@ -33,5 +41,23 @@ jQuery('#message-form').on('submit', function (e) {
     }, function (info) {
 
         console.log(`Serwer odpowiedział:::: Przyjąłem z komentarzem:`, info);
+    });
+});
+
+var locationButton = jQuery('#send-location');
+locationButton.on('click', function (e) {
+    if (!navigator.geolocation) {
+        return alert('Brak geolokacji w przeglądarce!')
+    }
+    navigator.geolocation.getCurrentPosition(function (position) {
+        console.log(position);
+        socket.emit('createLocationMessage', {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        }, function (info) {
+            console.log(`Serwer przyjął moją pozycję`, info);
+        });
+    }, function (err) {
+        alert('Unable to share location!' + err);
     });
 });
