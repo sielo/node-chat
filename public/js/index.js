@@ -59,7 +59,7 @@ locationButton.on('click', function (e) {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
         }, function (info) {
-            
+
             console.log(`Serwer przyjął moją pozycję`, info);
         });
     }, function (err) {
