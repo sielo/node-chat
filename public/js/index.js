@@ -33,13 +33,15 @@ socket.on('newLocationMessage', function (message) {
     jQuery('#messages').append(li);
 });
 
+var messageTextBox = jQuery('[name=message]');
+
 jQuery('#message-form').on('submit', function (e) {
     e.preventDefault();
     socket.emit('createMessage', {
         from: 'User',
-        text: jQuery('[name=message]').val()
+        text: messageTextBox.val()
     }, function (info) {
-
+        messageTextBox.val('');
         console.log(`Serwer odpowiedział:::: Przyjąłem z komentarzem:`, info);
     });
 });
@@ -49,15 +51,19 @@ locationButton.on('click', function (e) {
     if (!navigator.geolocation) {
         return alert('Brak geolokacji w przeglądarce!')
     }
+    locationButton.attr('disabled', 'disabled').text('Sending location...');
     navigator.geolocation.getCurrentPosition(function (position) {
-        console.log(position);
+        //console.log(position);
+        locationButton.removeAttr('disabled').text('Send location');
         socket.emit('createLocationMessage', {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
         }, function (info) {
+            
             console.log(`Serwer przyjął moją pozycję`, info);
         });
     }, function (err) {
         alert('Unable to share location!' + err);
+        locationButton.removeAttr('disabled').text('Send location');
     });
 });

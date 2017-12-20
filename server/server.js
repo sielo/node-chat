@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
 
         // Poniszy kod emituje zdarzenie do wszystkich podłączonych
         io.emit('newMessage', generateMessage(message.from, message.text));
-        callback('lolek!');   // to jest funkcja callback podana w socket.emit(<event>, <dane>, <callback>)
+        callback('');   // to jest funkcja callback podana w socket.emit(<event>, <dane>, <callback>)
         // Poniszy kod emituje zdarzebie do wszystkich POZA tym który jest w "socket" (czyli tym który dołączył do chatu)
         // socket.broadcast.emit('newMessage', {    // emituje zdarzenia do WSZYSTKICH podłączonych
         //         from: message.from,
