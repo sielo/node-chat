@@ -51,11 +51,14 @@ io.on('connection', (socket) => {
     });
 
     socket.on('createMessage', (message, callback) => {
-        console.log('createMessage', message);
+        //console.log('createMessage', message);
 
-
+        var user = users.getUser(socket.id);
+        if (user && isRealString(message.text)) {
+            io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+        }
         // Poniszy kod emituje zdarzenie do wszystkich podłączonych
-        io.emit('newMessage', generateMessage(message.from, message.text));
+
         callback('');   // to jest funkcja callback podana w socket.emit(<event>, <dane>, <callback>)
         // Poniszy kod emituje zdarzebie do wszystkich POZA tym który jest w "socket" (czyli tym który dołączył do chatu)
         // socket.broadcast.emit('newMessage', {    // emituje zdarzenia do WSZYSTKICH podłączonych
@@ -65,7 +68,10 @@ io.on('connection', (socket) => {
         //     });
     });
     socket.on('createLocationMessage', (coords, callback) => {
-        io.emit('newLocationMessage', generateLocationMessage('Admin', coords));
+        var user = users.getUser(socket.id);
+        if (user) {
+            io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords));
+        }
     });
     socket.on('disconnect', () => {
         //console.log('User disconnected!', socket)
@@ -74,8 +80,8 @@ io.on('connection', (socket) => {
         if (user) {
             io.to(user.room).emit('updateUserList', users.getUserList(user.room));
             io.to(user.room)
-            .emit('newMessage', generateMessage('Admin', `${user.name} left the chat...`)); // emituje zdarzenia do WSZYSTKICH podłączonych do pokoju ROOM POZA wywołującym
-       }
+                .emit('newMessage', generateMessage('Admin', `${user.name} left the chat...`)); // emituje zdarzenia do WSZYSTKICH podłączonych do pokoju ROOM POZA wywołującym
+        }
     });
 });
 
