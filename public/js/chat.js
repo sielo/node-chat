@@ -18,8 +18,15 @@ function scrollToBottom() {
 
 socket.on('connect', () => {
     console.log('Connected to server!');
-
-
+    var params = deparam(window.location.search);  // w js/libs/deparam.js
+    socket.emit('join', params, function (err) {
+        if (err) {
+            alert(err);
+            window.location.href = '/';
+        } else {
+            console.log('No error!');
+        }
+    });
     // socket.emit('createMessage', {
     //     from: 'Michał',
     //     text: 'Treść!'
@@ -27,6 +34,14 @@ socket.on('connect', () => {
 });
 socket.on('disconnect', () => {
     console.log('Disconnected from server!')
+});
+socket.on('updateUserList', (users) => {
+    //console.log('users list:', users);
+    var ol = jQuery('<ol></ol>');
+    users.forEach(function (user) {
+        ol.append(jQuery('<li></li>').text(user));
+    });
+    jQuery('#users').html(ol);
 });
 socket.on('newMessage', (message) => {
 
